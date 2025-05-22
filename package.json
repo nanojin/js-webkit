@@ -1,0 +1,14 @@
+{
+  "name": "webkit-lib",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/webkit-lib.user.js",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.0.0",
+    "typescript": "^5.0.0",
+    "rollup": "^4.0.0"
+  }
+}
