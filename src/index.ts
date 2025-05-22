@@ -1,1 +1,1 @@
-export * from './booru/meta/resolver';
+export * from './sites/booru/meta/resolver';
