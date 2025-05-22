@@ -13,35 +13,35 @@
 // ==/UserScript==
 
 Object.defineProperty(window, 'TAGS', {
-    get: () => {
-        return Array.from(
-            // document.querySelectorAll("#tag-sidebar li:has(a[href*='tags'])"),
-            Array.from(document.querySelectorAll("#tag-sidebar li"))
-            .filter(li => li.querySelector("a[href*='tags']")),
-            li => {
-                const type = li.className.split(' ').find(cls => cls.startsWith('tag-type-'))?.replace('tag-type-', '');
-                const tag = li.querySelector(`a[href*='tags']`).innerHTML.replace(/[ ]/g, '_');
-                const rank = li.querySelector('span').innerHTML;
-                // console.log(tag, rank);
-                // return li
-                return {tag, rank, type};
-            })
-    },
-    configurable: false,
-    enumerable: true,
+	get: () => {
+		return Array.from(
+			// document.querySelectorAll("#tag-sidebar li:has(a[href*='tags'])"),
+			Array.from(document.querySelectorAll("#tag-sidebar li"))
+			.filter(li => li.querySelector("a[href*='tags']")),
+			li => {
+				const type = li.className.split(' ').find(cls => cls.startsWith('tag-type-'))?.replace('tag-type-', '');
+				const tag = li.querySelector(`a[href*='tags']`).innerHTML.replace(/[ ]/g, '_');
+				const rank = li.querySelector('span').innerHTML;
+				// console.log(tag, rank);
+				// return li
+				return {tag, rank, type};
+			})
+	},
+	configurable: false,
+	enumerable: true,
 });
 
 (function () {
 	'use strict';
 
 	if (window.TAGS) console.log(window.TAGS); //	Print tags, to verify if it works
-    /* -- OLD CODE --
+	/* -- OLD CODE --
 	const TAGS = Array.from(
 		document.querySelectorAll('#tag-sidebar > li > a:nth-child(2)')
 	).map(
 		tag => tag.innerText.replace(/\ /g, l => '_')
 	);
-    */
+	*/
 
 	(function () {
 		// Define CSS rules in a dictionary
@@ -88,6 +88,22 @@ Object.defineProperty(window, 'TAGS', {
 				width: '100%',
 				height: '100%',
 				objectFit: 'contain' // or 'cover' depending on your needs
+			},			
+			'div#right-col': {
+				height: '100vh',
+				width: `40rem`,
+				position: `fixed`,
+				right: `0`,
+				bottom: `0`,
+				transform: `translate(80%, 0%)`,
+				maxWidth: `calc(100vw * 2 / 3)`,
+				transition: `transform 0.25s ease-in-out;`, /* Add transition for smooth animation */
+				overflowY: 'scroll',
+				scrollbarWidth: `none`,
+			},
+			'div#right-col:hover': {
+				transform: `translate(0%, 0%)`,
+				transition: `transform 1s ease-in-out;`,
 			},
 			'#comments': {
 				minWidth: '20%',
