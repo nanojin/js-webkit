@@ -1,40 +1,68 @@
 // ==UserScript==
-// @name				R34 Img Rebrowser
-// @author				Nano
-// @description			Restructures and improves browsing on Rule34.XXX
-// @version				0.0.002.8
-// @namespace			http://tampermonkey.net/
-// @match				https://rule34.xxx/index.php?*id=*
-// @icon				https://www.google.com/s2/favicons?sz=256&domain=rule34.xxx
-// // @require				https://raw.githubusercontent.com/nanojin/tampermonkey/main/r34_img_size.js
-// @updateURL			https://raw.githubusercontent.com/nanojin/tampermonkey/main/r34_img_size.js
-// @downloadURL			https://raw.githubusercontent.com/nanojin/tampermonkey/main/r34_img_size.js
-// @grant				none
+// @name         R34 Img Rebrowser
+// @namespace    http://tampermonkey.net/
+// @version      0.0.002.9
+// @description  Restructures and improves browsing on Rule34.XXX
+// @author       Nano
+// @match        https://rule34.xxx/index.php?*id=*
+// @icon         https://www.google.com/s2/favicons?sz=256&domain=rule34.xxx
+// @require      https://github.com/nanojin/js-webkit/raw/refs/heads/master/dist/webkit-lib.user.js
+// @grant        none
 // ==/UserScript==
 
-Object.defineProperty(window, 'TAGS', {
-	get: () => {
-		return Array.from(
-			// document.querySelectorAll("#tag-sidebar li:has(a[href*='tags'])"),
-			Array.from(document.querySelectorAll("#tag-sidebar li"))
-			.filter(li => li.querySelector("a[href*='tags']")),
-			li => {
-				const type = li.className.split(' ').find(cls => cls.startsWith('tag-type-'))?.replace('tag-type-', '');
-				const tag = li.querySelector(`a[href*='tags']`).innerHTML.replace(/[ ]/g, '_');
-				const rank = li.querySelector('span').innerHTML;
-				// console.log(tag, rank);
-				// return li
-				return {tag, rank, type};
-			})
+const site = {
+	mode: {
+		post: {
+			view: (/[?&]page=post/.test(location.search) && /[?&]s=view/.test(location.search) && /[?&]id=\d+/.test(location.search)),
+			list: (/[?&]page=post/.test(location.search) && /[?&]s=list/.test(location.search)),
+		},
 	},
-	configurable: false,
-	enumerable: true,
-});
+};
+
+function define_global_const(prop, value) {
+	const obj = window;
+	const getter_fn = (typeof value === 'function') ? value : undefined;
+
+	if (obj.hasOwnProperty(prop)) {
+		if (typeof obj[prop] === 'object') {
+			Object.assign(obj[prop], value);
+		} else {
+			obj[prop] = value;
+		}
+	} else {
+		if (getter_fn) {
+			Object.defineProperty(obj, prop, {
+				get: getter_fn,
+				configurable: false,
+				writable: true,
+				enumerable: true,
+			});
+		}
+		else {
+			Object.defineProperty(obj, prop, {
+				value: value,
+				configurable: false,
+				writable: true,
+				enumerable: true,
+			});
+		}
+	}
+};
+
+if (site.interface.post) {
+	Object.defineProperty(window, 'TAGS', {
+		get: WebKitLib.getTags,
+		configurable: false,
+		enumerable: true,
+	});
+}
+
 
 (function () {
 	'use strict';
 
-	if (window.TAGS) console.log(window.TAGS); //	Print tags, to verify if it works
+	const TAGS = window.TAGS;
+	if (TAGS) console.log(TAGS); //	Print tags, to verify if it works
 	/* -- OLD CODE --
 	const TAGS = Array.from(
 		document.querySelectorAll('#tag-sidebar > li > a:nth-child(2)')
@@ -91,19 +119,19 @@ Object.defineProperty(window, 'TAGS', {
 			},			
 			'div#right-col': {
 				height: '100vh',
-				width: `40rem`,
+				width: `32rem`,
+				maxWidth: `calc(100vw * 2 / 3)`,
 				position: `fixed`,
 				right: `0`,
 				bottom: `0`,
 				transform: `translate(80%, 0%)`,
-				maxWidth: `calc(100vw * 2 / 3)`,
-				transition: `transform 0.25s ease-in-out;`, /* Add transition for smooth animation */
+				transition: `transform calc(1s / 6) cubic-bezier(0.2, 0.1, 0.3, 0.9);`, /* Add transition for smooth animation */
 				overflowY: 'scroll',
 				scrollbarWidth: `none`,
 			},
 			'div#right-col:hover': {
 				transform: `translate(0%, 0%)`,
-				transition: `transform 1s ease-in-out;`,
+				transition: `transform calc(1s / 3) cubic-bezier(0.3, 0, 0.7, 1);`,
 			},
 			'#comments': {
 				minWidth: '20%',
