@@ -30,6 +30,10 @@ var WebKitLib = (function (exports) {
         return strategy ? strategy.getTags() : [];
     }
 
+    const booru = {
+        getTags,
+    };
+
     function getSiteKeyPrefix() {
         const hostname = location.hostname
             .replace(/^www\./, '')
@@ -64,8 +68,8 @@ var WebKitLib = (function (exports) {
         }
     };
 
+    exports.booru = booru;
     exports.db = SiteScopedDB;
-    exports.getTags = getTags;
 
     return exports;
 
