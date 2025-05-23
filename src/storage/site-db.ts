@@ -1,6 +1,8 @@
 function getSiteKeyPrefix(): string {
-  const hostname = location.hostname
+	const hostname = location.hostname
     .replace(/^www\./, '')
+	.replace(/^x/, 'twitter')
+    .replace(/pinterest\\.[a-z.]+$/, 'pinterest')
     .replace(/[^a-z0-9]+/gi, '_')
     .toLowerCase();
   return `__webkitdb__${hostname}__`;
